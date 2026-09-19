@@ -53,7 +53,23 @@ jobs:
           fi
 
       - name: Build release APK (R8 full mode)
-        run: ./gradlew :app:assembleRelease --stacktrace --no-daemon
+        run: |
+          set -o pipefail
+          ./gradlew :app:assembleRelease --stacktrace --no-daemon 2>&1 | tee "$RUNNER_TEMP/build.log"
+
+      # Compiles errors surfaced as annotations so they are visible
+      # without downloading the full log (and as a build-failure artifact).
+      - name: Surface compile errors as annotations
+        if: failure()
+        run: |
+          grep -aE "^e: |error: |Caused by: |FAILURE: " "$RUNNER_TEMP/build.log" | head -100 \
+            | while IFS= read -r line; do echo "::error::$(echo "$line" | cut -c1-900)"; done
+      - name: Upload build log (on failure)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: ${{ runner.temp }}/build.log
 
       - name: Collect APK
         run: |
