@@ -39,26 +39,25 @@ object InnerTubeParser {
         val tokenBox = TokenBox()
 
         // Initial page: twoColumnBrowseResultsRenderer -> tabs[selected] -> content
-        json.pathArr("contents", "twoColumnBrowseResultsRenderer", "tabs")?.objects().forEach { tab ->
+        json.pathArr("contents", "twoColumnBrowseResultsRenderer", "tabs")?.objects()?.forEach { tab ->
             val tabRenderer = tab.pathObj("tabRenderer") ?: return@forEach
             if (!tabRenderer.pathBool("selected")) return@forEach
             tabRenderer.pathArr("content", "richGridRenderer", "contents")?.let { walkItems(it, videos, tokenBox) }
-            tabRenderer.pathArr("content", "sectionListRenderer", "contents")?.objects().forEach { section ->
+            tabRenderer.pathArr("content", "sectionListRenderer", "contents")?.objects()?.forEach { section ->
                 section.pathObj("continuationItemRenderer")?.let { tokenBox.value = continuationToken(it) }
-                section.pathArr("itemSectionRenderer", "contents")?.objects().forEach { itemSection ->
+                section.pathArr("itemSectionRenderer", "contents")?.objects()?.forEach { itemSection ->
                     itemSection.pathArr("gridRenderer", "items")?.let { walkItems(it, videos, tokenBox) }
                     itemSection.pathArr("playlistVideoListRenderer", "contents")?.let { walkItems(it, videos, tokenBox) }
-                    itemSection.pathObj("videoRenderer")?.let { videos += videoFromVideoRenderer(it) }
+                    itemSection.pathObj("videoRenderer")?.let { r -> videoFromVideoRenderer(r)?.let { videos += it } }
                 }
             }
         }
 
         // Continuation pages
-        json.pathArr("onResponseReceivedActions")?.objects().forEach { action ->
+        json.pathArr("onResponseReceivedActions")?.objects()?.forEach { action ->
             action.pathArr("appendContinuationItemsAction", "continuationItems")?.let { walkItems(it, videos, tokenBox) }
-            action.pathArr("appendContinuationItemsAction", "continuationItems") ?: Unit
         }
-        json.pathArr("onResponseReceivedEndpoints")?.objects().forEach { endpoint ->
+        json.pathArr("onResponseReceivedEndpoints")?.objects()?.forEach { endpoint ->
             endpoint.pathArr("appendContinuationItemsAction", "continuationItems")?.let { walkItems(it, videos, tokenBox) }
         }
 
@@ -93,9 +92,9 @@ object InnerTubeParser {
 
     private fun videoFromVideoRenderer(r: JsonObject): VideoItem? {
         val id = r.pathStr("videoId") ?: return null
-        val isLive = r.pathArr("badges")?.objects().any {
+        val isLive = r.pathArr("badges")?.objects()?.any {
             it.pathStr("metadataBadgeRenderer", "style") == "BADGE_STYLE_TYPE_LIVE_NOW"
-        } || r.pathArr("thumbnailOverlays")?.objects().any {
+        } || r.pathArr("thumbnailOverlays")?.objects()?.any {
             it.pathStr("thumbnailOverlayTimeStatusRenderer", "style") == "LIVE"
         }
         val channelRun = r.pathArr("ownerText", "runs")?.objects()?.firstOrNull()
@@ -138,7 +137,7 @@ object InnerTubeParser {
     private fun videoFromPlaylistVideo(r: JsonObject): VideoItem? {
         val id = r.pathStr("videoId") ?: return null
         val duration = r.pathStr("lengthText", "simpleText")
-            ?: r.pathArr("thumbnailOverlays")?.objects().firstNotNullOfOrNull {
+            ?: r.pathArr("thumbnailOverlays")?.objects()?.firstNotNullOfOrNull {
                 it.pathStr("thumbnailOverlayTimeStatusRenderer", "text", "simpleText")
             }
         return VideoItem(
@@ -235,19 +234,19 @@ object InnerTubeParser {
         fun walk(contents: kotlinx.serialization.json.JsonArray) {
             contents.objects().forEach { entry ->
                 continuationToken(entry)?.let { tokenBox.value = it }
-                entry.pathObj("videoRenderer")?.let { videos += videoFromVideoRenderer(it) }
+                entry.pathObj("videoRenderer")?.let { r -> videoFromVideoRenderer(r)?.let { videos += it } }
                 entry.pathObj("channelRenderer")?.let { c -> channelFromChannelRenderer(c)?.let { channels += it } }
-                entry.pathObj("compactVideoRenderer")?.let { videos += videoFromCompact(it) }
-                entry.pathObj("reelItemRenderer")?.let { videos += videoFromReel(it) }
+                entry.pathObj("compactVideoRenderer")?.let { r -> videoFromCompact(r)?.let { videos += it } }
+                entry.pathObj("reelItemRenderer")?.let { r -> videoFromReel(r)?.let { videos += it } }
             }
         }
 
         json.pathArr("contents", "twoColumnSearchResultsRenderer", "primaryContents", "sectionListRenderer", "contents")
-            ?.objects().forEach { section ->
+            ?.objects()?.forEach { section ->
                 section.pathObj("continuationItemRenderer")?.let { tokenBox.value = continuationToken(it) }
                 section.pathArr("itemSectionRenderer", "contents")?.let { walk(it) }
             }
-        json.pathArr("onResponseReceivedActions")?.objects().forEach { action ->
+        json.pathArr("onResponseReceivedActions")?.objects()?.forEach { action ->
             action.pathArr("appendContinuationItemsAction", "continuationItems")?.let { walk(it) }
         }
         return Triple(videos.dedupById(), channels, tokenBox.value)
@@ -258,7 +257,7 @@ object InnerTubeParser {
     fun parseWatchNext(json: JsonObject): WatchNextInfo {
         var commentsToken: String? = null
         json.pathArr("contents", "twoColumnWatchNextResults", "results", "results", "contents")
-            ?.objects().forEach { content ->
+            ?.objects()?.forEach { content ->
                 val section = content.pathObj("itemSectionRenderer") ?: return@forEach
                 if (section.pathStr("sectionIdentifier") == "comment-item-section") {
                     commentsToken = section.pathArr("contents")?.objects()?.firstNotNullOfOrNull {
@@ -300,7 +299,7 @@ object InnerTubeParser {
         val sorts = mutableListOf<CommentSortOption>()
 
         // entityKey -> mutation payload object
-        val mutations = json.pathArr("frameworkUpdates", "entityBatchUpdate", "mutations")?.objects().orEmpty()
+        val mutations = json.pathArr("frameworkUpdates", "entityBatchUpdate", "mutations")?.objects()?.orEmpty()
         val payloadByKey = HashMap<String, JsonObject>(mutations.size * 2)
         mutations.forEach { mutation ->
             mutation.pathStr("entityKey")?.let { key -> payloadByKey[key] = mutation }
@@ -364,7 +363,7 @@ object InnerTubeParser {
             )
         }
 
-        json.pathArr("onResponseReceivedEndpoints")?.objects().forEach { endpoint ->
+        json.pathArr("onResponseReceivedEndpoints")?.objects()?.forEach { endpoint ->
             val contents = endpoint.pathArr("reloadContinuationItemsCommand", "continuationItems")
                 ?: endpoint.pathArr("appendContinuationItemsAction", "continuationItems")
                 ?: return@forEach
@@ -391,7 +390,7 @@ object InnerTubeParser {
                         "createRenderer", "commentSimpleboxRenderer", "submitButton", "buttonRenderer",
                         "serviceEndpoint", "createCommentEndpoint", "createCommentParams"
                     )
-                    header.pathArr("sortMenu", "sortFilterSubMenuRenderer", "subMenuItems")?.objects().forEach { sort ->
+                    header.pathArr("sortMenu", "sortFilterSubMenuRenderer", "subMenuItems")?.objects()?.forEach { sort ->
                         val title = sort.pathStr("title") ?: return@forEach
                         val token = sort.pathStr("serviceEndpoint", "continuationCommand", "token") ?: return@forEach
                         sorts += CommentSortOption(title = title, token = token, selected = sort.pathBool("selected"))
