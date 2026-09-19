@@ -6,9 +6,10 @@ import com.youtubelite.app.model.Video
 import com.youtubelite.app.model.WatchMeta
 import com.youtubelite.app.util.formatSeconds
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.limitedParallelism
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
-import org.schabi.newpipe.extractor.InfoType
+import org.schabi.newpipe.extractor.InfoItem
 import org.schabi.newpipe.extractor.MediaFormat
 import org.schabi.newpipe.extractor.stream.StreamInfo
 import org.schabi.newpipe.extractor.stream.StreamInfoItem
@@ -29,11 +30,17 @@ data class Resolved(
  */
 object StreamResolver {
 
-    private val extractionLane = Dispatchers.IO.limitedParallelism(1)
+    // Extraction (player JS + Rhino deciphering) is CPU-heavy and not re-entrant:
+    // a mutex serializes it on the IO pool — consistent latency, no thundering herd.
+    private val extractionMutex = Mutex()
     private val videoIdRegex = Regex("(?:v=|/shorts/|youtu\\.be/)([A-Za-z0-9_-]{11})")
     private val numberFormat = NumberFormat.getIntegerInstance(Locale.US)
 
-    suspend fun resolve(videoId: String): Resolved = withContext(extractionLane) {
+    suspend fun resolve(videoId: String): Resolved = withContext(Dispatchers.IO) {
+        extractionMutex.withLock { extract(videoId) }
+    }
+
+    private suspend fun extract(videoId: String): Resolved {
         val info = StreamInfo.getInfo("https://www.youtube.com/watch?v=$videoId")
 
         val qualities = info.videoOnlyStreams.asSequence()
@@ -86,7 +93,7 @@ object StreamResolver {
             description = info.description?.content.orEmpty(),
         )
 
-        Resolved(
+        return Resolved(
             meta = meta,
             streams = StreamSet(
                 qualities = qualities,
@@ -94,7 +101,7 @@ object StreamResolver {
                 muxed = muxed,
             ),
             related = info.relatedItems
-                .filter { it.infoType == InfoType.VIDEO }
+                .filter { it.infoType == InfoItem.InfoType.STREAM }
                 .mapNotNull { item ->
                     val streamItem = item as? StreamInfoItem ?: return@mapNotNull null
                     val id = videoIdRegex.find(streamItem.url ?: "")

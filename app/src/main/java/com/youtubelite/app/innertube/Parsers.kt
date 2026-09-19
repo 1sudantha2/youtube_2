@@ -5,6 +5,7 @@ import com.youtubelite.app.model.QualityOption
 import com.youtubelite.app.model.Video
 import com.youtubelite.app.util.asArr
 import com.youtubelite.app.util.asObj
+import com.youtubelite.app.util.dig
 import com.youtubelite.app.util.digStr
 import com.youtubelite.app.util.findAll
 import com.youtubelite.app.util.findFirstBool
@@ -155,7 +156,7 @@ object YtParsers {
 
     private fun thumbOf(o: JsonObject?, id: String): String =
         o?.getA("thumbnails")?.lastOrNull()?.asObj()?.getS("url")
-            ?: o?.digStr("thumbnailViewModel", "image", "sources")
+            ?: o?.dig("thumbnailViewModel", "image", "sources")
                 ?.asArr()?.lastOrNull()?.asObj()?.getS("url")
             ?: "https://i.ytimg.com/vi/$id/mqdefault.jpg"
 
