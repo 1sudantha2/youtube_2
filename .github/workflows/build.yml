@@ -26,7 +26,17 @@ jobs:
           cache-read-only: false
 
       - name: Build release APK (R8 full mode)
-        run: gradle :app:assembleRelease --stacktrace
+        run: |
+          set -o pipefail
+          gradle :app:assembleRelease --stacktrace 2>&1 | tee build_output.log
+
+      - name: Surface errors as annotations
+        if: failure()
+        run: |
+          grep -E "^e: |error: |FAILURE: Build failed|Caused by: " build_output.log \
+            | sort -u | head -45 | cut -c1-380 \
+            | while IFS= read -r line; do echo "::error::${line//%/}"; done
+          echo "total-errors=$(grep -cE '^e: ' build_output.log || true)"
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
