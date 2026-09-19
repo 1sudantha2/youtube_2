@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  YouTube "play button" mark.
+
+  Geometry (24x24 viewport, matches the official 24dp asset):
+    * rounded-rect body  : x 1.6 -> 22.4, y 4.4 -> 19.6, corner radius 4.3
+    * play triangle      : (9.8, 8.4) -> (16.6, 12.0) -> (9.8, 15.6)
+
+  The triangle is punched out of the body with a counter-clockwise sub-path while the
+  outer rectangle is drawn clockwise, so a single non-zero-fill path produces the
+  transparent notch (no second colour, no layer-list, no PNG).
+
+  Use `android:tint` to recolour it: white on red for the launcher badge, red on
+  transparent for in-app branding.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24"
+    android:tint="#FFFFFF">
+
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M5.9,4.4 L18.1,4.4 C20.475,4.4 22.4,6.325 22.4,8.7 L22.4,15.3 C22.4,17.675 20.475,19.6 18.1,19.6 L5.9,19.6 C3.525,19.6 1.6,17.675 1.6,15.3 L1.6,8.7 C1.6,6.325 3.525,4.4 5.9,4.4 Z M9.8,8.4 L9.8,15.6 L16.6,12.0 Z" />
+</vector>

@@ -1,0 +1,36 @@
+# ---- Gradle / Android build output -------------------------------------------------
+.gradle/
+build/
+app/build/
+captures/
+.externalNativeBuild/
+.cxx/
+local.properties
+
+# ---- IDE ---------------------------------------------------------------------------
+.idea/
+*.iml
+*.ipr
+*.iws
+.DS_Store
+
+# ---- Signing material (never commit keys) -------------------------------------------
+*.jks
+*.keystore
+keystore.properties
+
+# ---- Kotlin / tooling caches ---------------------------------------------------------
+.kotlin/
+kotlin-js-store/
+
+# ---- Test / coverage output ----------------------------------------------------------
+coverage/
+*.hprof
+
+# ---- Local scratch --------------------------------------------------------------------
+tmp/
+*.log
+
+# ---- Python (tools/) -----------------------------------------------------------------
+__pycache__/
+*.pyc
