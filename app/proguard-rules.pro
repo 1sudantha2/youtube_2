@@ -37,3 +37,4 @@
 # never executed on Android — suppress R8's missing-class errors.
 -dontwarn java.beans.**
 -dontwarn java.lang.management.**
+-dontwarn javax.script.**
