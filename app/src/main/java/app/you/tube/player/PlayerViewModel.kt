@@ -457,7 +457,7 @@ class PlayerViewModel(
                         s.copy(
                             comments = s.comments.copy(
                                 loadingRepliesFor = null,
-                                replies = s.comments.replies.put(comment.id, page.items).toPersistentMap()
+                                replies = s.comments.replies.toPersistentMap().put(comment.id, page.items)
                             )
                         )
                     }

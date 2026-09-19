@@ -140,7 +140,7 @@ private fun HomeTopBar(onSearchClick: () -> Unit) {
             Modifier
                 .size(26.dp)
                 .clip(RoundedCornerShape(7.dp))
-                .painterIcon()
+                .paint(painterResource(R.drawable.ic_splash_logo))
         )
         Spacer(Modifier.width(8.dp))
         Text(
@@ -155,12 +155,6 @@ private fun HomeTopBar(onSearchClick: () -> Unit) {
     }
 }
 
-// Draws the splash play-mark drawable as the top-bar brand tile.
-private fun Modifier.painterIcon(): Modifier = this.then(
-    Modifier.paint(
-        androidx.compose.ui.res.painterResource(R.drawable.ic_splash_logo)
-    )
-)
 
 @Composable
 private fun HomeSkeleton(cards: Int = 4) {

@@ -68,6 +68,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.vectorResource
@@ -348,7 +349,7 @@ private fun VideoSurfaceBox(
                     onClick = onTogglePlayPause,
                     modifier = Modifier.align(Alignment.Center).size(64.dp)
                 ) {
-                    val pauseIcon = androidx.compose.ui.res.vectorResource(R.drawable.ic_pause)
+                    val pauseIcon = ImageVector.vectorResource(R.drawable.ic_pause)
                     Icon(
                         if (isPlaying) pauseIcon else Icons.Filled.PlayArrow,
                         contentDescription = if (isPlaying) "Pause" else "Play",
@@ -542,7 +543,7 @@ private fun VideoDetails(
             }
             ActionPill(selected = likeState == LikeState.DISLIKE, onClick = onDislike) {
                 Icon(
-                    androidx.compose.ui.res.vectorResource(R.drawable.ic_thumb_down),
+                    ImageVector.vectorResource(R.drawable.ic_thumb_down),
                     contentDescription = "Dislike",
                     tint = if (likeState == LikeState.DISLIKE) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.size(17.dp)
@@ -551,7 +552,7 @@ private fun VideoDetails(
             Spacer(Modifier.weight(1f))
             IconButton(onClick = onOpenComments) {
                 Icon(
-                    androidx.compose.ui.res.vectorResource(R.drawable.ic_comment),
+                    ImageVector.vectorResource(R.drawable.ic_comment),
                     contentDescription = "Comments",
                     tint = MaterialTheme.colorScheme.onSurface
                 )
