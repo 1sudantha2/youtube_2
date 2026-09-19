@@ -30,3 +30,10 @@
 -dontwarn org.conscrypt.**
 -dontwarn org.bouncycastle.**
 -dontwarn org.openjsse.**
+
+# ------------------------- Rhino JDK-only references ------------------------
+# Rhino (NewPipeExtractor's JS engine) references JDK classes that do not
+# exist on Android (java.beans.*, java.lang.management.*). These paths are
+# never executed on Android — suppress R8's missing-class errors.
+-dontwarn java.beans.**
+-dontwarn java.lang.management.**
