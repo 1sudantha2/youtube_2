@@ -55,7 +55,7 @@ jobs:
       - name: Build release APK (R8 full mode)
         run: |
           set -o pipefail
-          ./gradlew :app:assembleRelease --stacktrace --no-daemon 2>&1 | tee "$RUNNER_TEMP/build.log"
+          ./gradlew :app:assembleRelease --stacktrace 2>&1 | tee "$RUNNER_TEMP/build.log"
 
       # Compiles errors surfaced as annotations so they are visible
       # without downloading the full log (and as a build-failure artifact).

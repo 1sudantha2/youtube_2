@@ -6,9 +6,11 @@ import app.you.tube.core.model.CommentSortOption
 import app.you.tube.core.model.CommentsPage
 import app.you.tube.core.model.VideoItem
 import app.you.tube.core.model.WatchNextInfo
+import app.you.tube.core.util.deepFind
 import app.you.tube.core.util.objects
 import app.you.tube.core.util.pathArr
 import app.you.tube.core.util.pathBool
+import app.you.tube.core.util.pathInt
 import app.you.tube.core.util.pathObj
 import app.you.tube.core.util.pathStr
 import kotlinx.collections.immutable.toImmutableList
@@ -92,11 +94,11 @@ object InnerTubeParser {
 
     private fun videoFromVideoRenderer(r: JsonObject): VideoItem? {
         val id = r.pathStr("videoId") ?: return null
-        val isLive = r.pathArr("badges")?.objects()?.any {
+        val isLive = (r.pathArr("badges")?.objects()?.any {
             it.pathStr("metadataBadgeRenderer", "style") == "BADGE_STYLE_TYPE_LIVE_NOW"
-        } || r.pathArr("thumbnailOverlays")?.objects()?.any {
+        } ?: false) || (r.pathArr("thumbnailOverlays")?.objects()?.any {
             it.pathStr("thumbnailOverlayTimeStatusRenderer", "style") == "LIVE"
-        }
+        } ?: false)
         val channelRun = r.pathArr("ownerText", "runs")?.objects()?.firstOrNull()
         val channelName = channelRun?.pathStr("text")
             ?: r.pathStr("shortBylineText", "runs", "0", "text")
@@ -199,7 +201,7 @@ object InnerTubeParser {
         return ChannelItem(
             id = id,
             name = r.pathStr("title", "simpleText") ?: r.pathStr("title", "runs", "0", "text") ?: "",
-            avatarUrl = pickAvatar(r.pathArr("thumbnail", "thumbnails")),
+            avatarUrl = pickAvatar(r.pathArr("thumbnail", "thumbnails")) ?: "",
             subscribers = r.pathStr("subscriberCountText", "simpleText")
                 ?: r.pathStr("videoCountText", "simpleText")
         )
@@ -299,7 +301,7 @@ object InnerTubeParser {
         val sorts = mutableListOf<CommentSortOption>()
 
         // entityKey -> mutation payload object
-        val mutations = json.pathArr("frameworkUpdates", "entityBatchUpdate", "mutations")?.objects()?.orEmpty()
+        val mutations = json.pathArr("frameworkUpdates", "entityBatchUpdate", "mutations")?.objects() ?: emptyList()
         val payloadByKey = HashMap<String, JsonObject>(mutations.size * 2)
         mutations.forEach { mutation ->
             mutation.pathStr("entityKey")?.let { key -> payloadByKey[key] = mutation }
