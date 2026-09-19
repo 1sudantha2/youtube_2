@@ -29,8 +29,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.ThumbDown
 import androidx.compose.material.icons.filled.ThumbUp
+import com.youtubelite.app.ui.components.VideoCard
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -469,7 +469,7 @@ fun WatchScreen(videoId: String, nav: NavState) {
                                 )
                                 ActionChip(
                                     label = if (disliked) "Disliked" else "Dislike",
-                                    icon = Icons.Filled.ThumbDown,
+                                    icon = null, // thumb-down vector via resources would duplicate icons; label carries meaning
                                     active = disliked,
                                     onClick = { vm.toggleDislike() },
                                     modifier = Modifier.weight(1f),
