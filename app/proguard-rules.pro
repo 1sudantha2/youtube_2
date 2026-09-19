@@ -38,3 +38,8 @@
 -dontwarn java.beans.**
 -dontwarn java.lang.management.**
 -dontwarn javax.script.**
+-dontwarn jdk.dynalink.**
+-dontwarn jdk.internal.**
+-dontwarn sun.misc.**
+-dontwarn sun.security.**
+-dontwarn sun.reflect.**
