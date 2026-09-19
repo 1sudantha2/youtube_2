@@ -18,6 +18,7 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,7 +28,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.you.tube.data.SettingsStore
 import app.you.tube.ui.LocalAppContainer
 import kotlinx.coroutines.launch
@@ -37,8 +37,8 @@ fun SettingsScreen(onOpenLogin: () -> Unit) {
     val container = LocalAppContainer.current
     val scope = rememberCoroutineScope()
 
-    val defaultQuality by container.settings.defaultQuality.collectAsStateWithLifecycle()
-    val autoplay by container.settings.autoplay.collectAsStateWithLifecycle()
+    val defaultQuality by container.settings.defaultQuality.collectAsState(initialValue = SettingsStore.QUALITY_AUTO)
+    val autoplay by container.settings.autoplay.collectAsState(initialValue = true)
     val loggedIn = container.auth.isLoggedIn
     var showQualityDialog by remember { mutableStateOf(false) }
 
@@ -179,14 +179,10 @@ private fun SettingsHeader(text: String) {
 
 @Composable
 private fun SettingRow(title: String, subtitle: String, onClick: () -> Unit) {
-    androidx.compose.foundation.clickable(
-        onClick = onClick,
-        modifier = Modifier
-    ).let { }
     Column(
         Modifier
             .fillMaxWidth()
-            .androidx.compose.foundation.clickable { onClick() }
+            .clickable(onClick = onClick)
             .padding(horizontal = 16.dp, vertical = 10.dp)
     ) {
         Text(title, style = MaterialTheme.typography.bodyMedium)
