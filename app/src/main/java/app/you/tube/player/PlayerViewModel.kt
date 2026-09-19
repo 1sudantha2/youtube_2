@@ -12,7 +12,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.you.tube.core.model.CommentItem
 import app.you.tube.core.model.CommentSortOption
-import app.you.tube.core.model.LikeAction
+import app.you.tube.core.network.LikeAction
 import app.you.tube.core.model.LikeState
 import app.you.tube.core.model.StreamBundle
 import app.you.tube.core.model.StreamQuality

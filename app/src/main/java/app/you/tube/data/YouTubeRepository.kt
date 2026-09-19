@@ -5,7 +5,7 @@ import app.you.tube.core.extract.StreamRepository
 import app.you.tube.core.model.ChannelItem
 import app.you.tube.core.model.CommentItem
 import app.you.tube.core.model.CommentsPage
-import app.you.tube.core.model.LikeAction
+import app.you.tube.core.network.LikeAction
 import app.you.tube.core.model.VideoItem
 import app.you.tube.core.model.WatchNextInfo
 import app.you.tube.core.network.InnerTubeClient
