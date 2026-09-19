@@ -1,0 +1,109 @@
+name: Build You-Tube APK
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  unit-tests-and-apk:
+    name: Unit tests + debug/release APK
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: false
+
+      - name: Unit tests
+        run: ./gradlew :app:test --stacktrace
+
+      - name: Assemble debug + release APK
+        run: ./gradlew :app:assembleDebug :app:assembleRelease --stacktrace
+        env:
+          # Optional repo secrets. Without them the release APK is unsigned and
+          # only the debug APK is directly installable.
+          SIGNING_STORE_FILE: ${{ secrets.SIGNING_STORE_FILE }}
+          SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
+          SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+
+      - name: Collect APKs
+        run: |
+          mkdir -p out
+          find app/build/outputs/apk -name '*.apk' -exec cp -v {} out/ \;
+          ls -lh out
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: You-Tube-APK
+          path: out/*.apk
+          retention-days: 30
+
+      - name: Upload build report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: You-Tube-Reports
+          path: |
+            app/build/reports
+            app/build/outputs
+          retention-days: 14
+
+  baseline-profile:
+    name: Macrobenchmark + baseline profile (emulator)
+    needs: unit-tests-and-apk
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: false
+
+      - uses: actions/setup-android@v3
+      - uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          profile: nexus_5
+          script: |
+            ./gradlew :app:assembleDebug --stacktrace
+            # Runs the generator + macrobenchmarks on the emulator, then merges the
+            # generated profile into :app (this is the documented AGP task).
+            ./gradlew :app:generateBaselineProfile --stacktrace
+            mkdir -p out
+            find baselineprofile/build/outputs baselineprofile/build/reports -name 'baseline-prof.txt' -o -name '*.prof' 2>/dev/null | head -20
+            find baselineprofile/build/outputs -name '*.txt' -exec cp -v {} out/ \; 2>/dev/null || true
+            find app/build/outputs/baselineProfiles -name '*.prof' -exec cp -v {} out/ \; 2>/dev/null || true
+
+      - name: Upload benchmark output
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: You-Tube-Benchmark
+          path: |
+            out/
+            baselineprofile/build/reports
+            app/build/outputs/baselineProfiles
+          retention-days: 14
