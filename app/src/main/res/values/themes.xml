@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.YouTube" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/yt_background</item>
+    </style>
+
+    <!-- Cold-start splash: dark background + brand play mark, then hand-off to Compose -->
+    <style name="Theme.YouTube.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/yt_splash_background</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash_logo</item>
+        <item name="windowSplashScreenAnimationDuration">150</item>
+        <item name="postSplashScreenTheme">@style/Theme.YouTube</item>
+    </style>
+
+</resources>
