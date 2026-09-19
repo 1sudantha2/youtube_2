@@ -293,7 +293,8 @@ class PlaybackService : MediaSessionService() {
             else -> null
         } ?: return
 
-        player.setMediaSource(source, if (startMs > 0) startMs else 0L)
+        if (startMs > 0) player.setMediaSource(source, startMs)
+        else player.setMediaSource(source)
         player.prepare()
         player.playWhenReady = true
         publishExtras(active)
