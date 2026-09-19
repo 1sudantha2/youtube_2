@@ -190,9 +190,9 @@ class PlaybackService : MediaSessionService() {
         override fun onPlaybackResumption(
             mediaSession: MediaSession,
             controller: MediaSession.ControllerInfo,
-        ): ListenableFuture<MediaItemsWithStartPosition> =
+        ): ListenableFuture<MediaSession.MediaItemsWithStartPosition> =
             Futures.immediateFuture(
-                MediaItemsWithStartPosition(ImmutableList.of(), 0, C.TIME_UNSET)
+                MediaSession.MediaItemsWithStartPosition(ImmutableList.of(), 0, C.TIME_UNSET)
             )
     }
 
@@ -326,7 +326,7 @@ class PlaybackService : MediaSessionService() {
             active.muxed.isNotEmpty() -> "${active.muxed.last().label} (fallback)"
             else -> "Audio"
         }
-        session?.setExtras(
+        session?.setSessionExtras(
             Bundle().apply {
                 putString(PlayerContract.EXTRA_ACTIVE_LABEL, label)
                 putBoolean(PlayerContract.EXTRA_AUTO, active.auto)
