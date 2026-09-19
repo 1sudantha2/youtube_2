@@ -1,0 +1,10 @@
+# Hand-authored startup baseline profile (compiled on-device via profileinstaller).
+HSPLcom/youtubelite/app/YouApp;-><init>()V
+HSPLcom/youtubelite/app/YouApp;->onCreate()V
+HSPLcom/youtubelite/app/YouApp;->newImageLoader()Lcoil/ImageLoader;
+HSPLcom/youtubelite/app/MainActivity;-><init>()V
+HSPLcom/youtubelite/app/MainActivity;->onCreate(Landroid/os/Bundle;)V
+HSPLcom/youtubelite/app/AppGraph;-><clinit>()V
+HSPLcom/youtubelite/app/AppGraph;->init(Landroid/app/Application;)V
+HSPLcom/youtubelite/app/auth/AuthRepository;-><init>(Landroid/content/Context;)V
+HSPLcom/youtubelite/app/player/PlaybackHub;->init(Landroid/content/Context;)V
