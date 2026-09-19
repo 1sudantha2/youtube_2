@@ -277,7 +277,7 @@ class PlaybackService : MediaSessionService() {
     private fun start(active: ActivePlay, startMs: Long) {
         // MediaSource-based playback control lives on ExoPlayer, not Player.
         val player = session?.player as? ExoPlayer ?: return
-        val source: MediaSource? = when {
+        val source = when {
             active.qualityIndex >= 0 && active.qualities.getOrNull(active.qualityIndex) != null &&
                 active.audioUrl != null -> {
                 val q = active.qualities[active.qualityIndex]
@@ -290,8 +290,8 @@ class PlaybackService : MediaSessionService() {
             active.audioUrl != null ->
                 audioSource(active.audioUrl) // audio-only fallback (rare)
 
-            else -> null
-        } ?: return
+            else -> return
+        }
 
         if (startMs > 0) player.setMediaSource(source, startMs)
         else player.setMediaSource(source)
