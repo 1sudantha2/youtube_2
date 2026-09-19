@@ -1,0 +1,13 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Red rounded square with white play mark (splash keeps content in the mask-safe center) -->
+    <path
+        android:fillColor="#FF0000"
+        android:pathData="M36,36 h36 a8,8 0 0 1 8,8 v20 a8,8 0 0 1 -8,8 h-36 a8,8 0 0 1 -8,-8 v-20 a8,8 0 0 1 8,-8 Z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M48,44 L48,64 L64,54 Z" />
+</vector>

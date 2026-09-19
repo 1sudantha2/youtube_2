@@ -1,0 +1,10 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- White play mark, optically centered inside the adaptive-icon safe zone -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M39,35 L39,73 L71,54 Z" />
+</vector>

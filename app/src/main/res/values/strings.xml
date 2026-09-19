@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">You-Tube</string>
+    <string name="notification_channel_name">You-Tube playback</string>
+    <string name="notification_channel_description">Media playback controls</string>
+    <string name="search_hint">Search You-Tube</string>
+    <string name="sign_in">Sign in with Google</string>
+    <string name="error_generic">Something went wrong. Tap to retry.</string>
+</resources>

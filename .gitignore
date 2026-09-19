@@ -1,0 +1,14 @@
+*.iml
+.gradle/
+/local.properties
+/.idea
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+app/build/
+.kotlin/
+# NOTE: signing/ keystore is intentionally committed so GitHub Actions can produce
+# a stably-signed, installable APK out of the box. See signing/README.md
