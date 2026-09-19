@@ -37,8 +37,8 @@ fun SettingsScreen(onOpenLogin: () -> Unit) {
     val container = LocalAppContainer.current
     val scope = rememberCoroutineScope()
 
-    val defaultQuality by container.settings.defaultQuality.collectAsState(initialValue = SettingsStore.QUALITY_AUTO)
-    val autoplay by container.settings.autoplay.collectAsState(initialValue = true)
+    val defaultQuality by container.settings.defaultQuality.collectAsState(initial = SettingsStore.QUALITY_AUTO)
+    val autoplay by container.settings.autoplay.collectAsState(initial = true)
     val loggedIn = container.auth.isLoggedIn
     var showQualityDialog by remember { mutableStateOf(false) }
 
