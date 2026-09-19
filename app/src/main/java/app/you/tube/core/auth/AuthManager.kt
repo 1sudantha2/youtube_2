@@ -3,6 +3,8 @@ package app.you.tube.core.auth
 import android.content.Context
 import android.content.SharedPreferences
 import android.webkit.CookieManager
+import androidx.security.crypto.EncryptedSharedPreferences
+import androidx.security.crypto.MasterKey
 
 /**
  * Session layer. Google cookies captured by the in-app WebView (SID, HSID,
