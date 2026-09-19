@@ -80,7 +80,7 @@ android {
 
 composeCompiler {
     // Treat all UI models as stable: guarantees skippable/immutable lambdas & items.
-    stabilityConfigurationPath = file("compose-stability.conf")
+    stabilityConfigurationFiles.add(layout.projectDirectory.file("compose-stability.conf"))
 }
 
 dependencies {
