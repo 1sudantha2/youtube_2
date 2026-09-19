@@ -12,7 +12,7 @@ coil = "2.7.0"
 kotlinxSerialization = "1.7.3"
 datastore = "1.1.1"
 securityCrypto = "1.1.0-alpha06"
-newpipeExtractor = "v0.26.4"
+newpipeExtractor = "v0.26.5"
 profileinstaller = "1.4.1"
 
 [libraries]
